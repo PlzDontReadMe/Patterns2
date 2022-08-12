@@ -11,7 +11,7 @@ import lombok.experimental.UtilityClass;
 import java.util.Locale;
 
 import static io.restassured.RestAssured.given;
-import static io.restassured.http.Method.POST;
+
 
 public class DataGenerator {
     private static final RequestSpecification requestSpec = new RequestSpecBuilder()
@@ -29,7 +29,7 @@ public class DataGenerator {
     private static void sendRequest(RegistrationDto registeredUser) {
         given() // "дано"
                 .spec(requestSpec) // указываем, какую спецификацию используем
-                .body(Registration.getRegisteredUser("active")) // передаём в теле объект, который будет преобразован в JSON
+                .body(registeredUser) // передаём в теле объект, который будет преобразован в JSON
                 .when() // "когда"
                 .post("/api/system/users") // на какой путь, относительно BaseUri отправляем запрос
                 .then() // "тогда ожидаем"
@@ -56,13 +56,14 @@ public class DataGenerator {
 @UtilityClass
     public static class Registration {
         public static RegistrationDto getUser(String status) {
-            RegistrationDto user = new RegistrationDto(getRandomLogin(), getRandomPassword(),"active");
+            RegistrationDto user = new RegistrationDto(getRandomLogin(), getRandomPassword(),status);
             // TODO: создать пользователя user используя методы getRandomLogin(), getRandomPassword() и параметр status
             return user;
         }
 
         public static RegistrationDto getRegisteredUser(String status) {
            RegistrationDto registeredUser = getUser(status);
+           sendRequest(registeredUser);
             // TODO: объявить переменную registeredUser и присвоить ей значение возвращённое getUser(status).
             // Послать запрос на регистрацию пользователя с помощью вызова sendRequest(registeredUser)
             return registeredUser;
